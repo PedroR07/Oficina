@@ -190,3 +190,15 @@ public class Oficina {
     public static int iD = 1;
     //Variável global de identação do arquivo mais recente editado em sessão anterior.
 }
+
+//Logs:
+
+/***Atualização 1.1: 10 de Dezembro de 2023 - Sistema de Registros de Veículos***/
+/*Adição do Sistema de Registros de Carros:*/
+
+// -> Função de adicionar veículos com um limite de 10(a ser revisada na próxima atualização);
+
+// -> Registrador de ID respectivo ao carro anterior registrado,
+// mantendo a sessão atualizada (se você criou o registro "Carro 1", na próxima execução do programa,
+// ele registrará o novo carro como "Carro 2", por exemplo.
+// O mesmo vale caso só registre o novo carro sem sair da execução);
