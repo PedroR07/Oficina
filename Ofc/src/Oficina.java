@@ -1,14 +1,20 @@
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
 
 public class Oficina {
     public static void main(String[] args) {
-        inicializar(caminhoFila);
+        startCaminho(caminhoFila);
+        lerId();
         menuGeral();
     }
+    
     public static void menuGeral() {
         boolean holder = true;
         while (holder) {
@@ -36,7 +42,7 @@ public class Oficina {
                     editCar();
                     break;
                 case 2:
-                    // Adicionar código para a opção 2
+                    
                     break;
                 case 3:
                     // Adicionar código para a opção 3
@@ -56,6 +62,7 @@ public class Oficina {
             }
         }
     }
+    
     public static void menuCliente() {
         boolean holder = true;
         while(holder == true){
@@ -92,14 +99,21 @@ public class Oficina {
                     addCarro.tipoServiço = Integer.parseInt(JOptionPane.showInputDialog(null, "Especifique os serviços as serem prestados:\n1- Alinhamento\n2-Balanceamento\n3-Revisão"));
                     
                     try{
-                    addTxt(addCarro);
+                        if(iD < 10){
+                            addTxt(addCarro);
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(null, "O sistema atingiu o limite de carros por dia.");
+                        }
                     }
                     catch(FileNotFoundException e){
                         JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
                     }
                     
                 break;
-        
+            case 2:
+                    
+                break;
             case 9:
                 holder = false;
                 return;
@@ -108,8 +122,8 @@ public class Oficina {
     }
 
     public static boolean addTxt(RegCar Carro) throws FileNotFoundException{
-        int id = 1;
-        PrintWriter pw = new PrintWriter(caminhoFila + id + ".txt");
+        lerId();
+        PrintWriter pw = new PrintWriter(caminhoFila + (iD) + ".txt");
         pw.println(Carro.nomeCarro);
         pw.println(Carro.marca);
         pw.println(Carro.ano);
@@ -117,15 +131,62 @@ public class Oficina {
         pw.flush();
         pw.close();
         JOptionPane.showMessageDialog(null, "Veículo registrado com sucesso!");
+        gravarId();
         return false;
     }
-    private static void inicializar(String caminhoFila) {
+    
+    private static void startCaminho(String caminhoFila) {
 		File dir=new File(caminhoFila);
 		if(!dir.exists()) {
 			dir.mkdir();
 		}
-	}
-    public static String caminhoFila = "Fila/";
-    public static String caminhoCtts = "Contatos/";
+        File arquivo = new File("id.txt");
+		if(!arquivo.exists()) {
+			try {
+				arquivo.createNewFile();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
+				e.printStackTrace();
+			}
+        }
+    }
 
+    private static void gravarId() {
+        PrintWriter pw;
+		try {
+			pw = new PrintWriter("id.txt");
+			pw.println((iD+1));
+			pw.flush();
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	
+	}
+
+    private static void lerId() {
+        try{
+        BufferedReader br = new BufferedReader(new FileReader("id.txt"));
+        String A = br.readLine();
+        if(A == null){
+            iD = 1;
+        }
+        else{
+            iD = Integer.parseInt(A);
+        }
+        br.close();
+        }
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, "Não foi possível ler o arquivo.");
+        }
+    }
+
+    public static String caminhoFila = "Fila/";
+    //Variável global da localização da fila/registro de carros.
+
+    public static String caminhoCtts = "Contatos/";
+    //Variável global da localização dos contatos dos clientes.
+    
+    public static int iD = 1;
+    //Variável global de identação do arquivo mais recente editado em sessão anterior.
 }
