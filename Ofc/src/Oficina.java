@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,8 +17,15 @@ public class Oficina {
     public static void menuGeral() {
         boolean holder = true;
         while (holder) {
+            
             try{
-            int Seletor = Integer.parseInt(JOptionPane.showInputDialog(null, "1-Menu do Gestor\n2-Menu do Cliente\n\n\n\n\n9-Sair"));
+            int Seletor = 0;
+            String strSeletor = JOptionPane.showInputDialog(null, "1-Menu do Gestor\n2-Menu do Cliente\n\n\n\n\n9-Sair");
+            if(strSeletor == null){
+                Seletor = 9;
+            }else{
+            Seletor = Integer.parseInt(strSeletor);
+            }
             switch (Seletor) {
                 case 1:
                     menuGestor();
@@ -27,13 +33,13 @@ public class Oficina {
                 case 2:
                     menuCliente();
                     break;
-                case 9:
+                case 9 :
                     holder = false;
                     break;
                 }
             }
             catch(NumberFormatException e){
-                JOptionPane.showMessageDialog(null, "Insira um valor válido!");
+                JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
             }
             }
         }
@@ -41,13 +47,22 @@ public class Oficina {
     public static void menuGestor() {
         boolean holder = true;
         while (holder) {
-            int seletor = Integer.parseInt(JOptionPane.showInputDialog(null, "1-Registrar carro\n2-Alterar/Relatar observações\n3-Lista de clientes\n4-Lista de Espera\n5-Saldo\n6- Solicitar permissão para manutenção\n\n\n\n9-Voltar"));
+            
+            try{
+            int seletor = 0;
+            String strSeletor = JOptionPane.showInputDialog(null, "1-Registrar carro\n2-Alterar/Relatar observações\n3-Lista de clientes\n4-Lista de Espera\n5-Saldo\n6- Solicitar permissão para manutenção\n\n\n\n9-Voltar");
+            if(strSeletor == null){
+                seletor = 9;
+            }else{
+                seletor = Integer.parseInt(strSeletor);
+            }
             switch (seletor) {
                 case 1:
                     addCar();
                     break;
                 case 2:
-                    editCar();
+                    String listFila = listCar();
+                    editCar(listFila);
                     break;
                 case 3:
                     // Adicionar código para a opção 3
@@ -64,6 +79,9 @@ public class Oficina {
                 case 9:
                     holder = false;
                     break;
+                    }
+                }catch(NumberFormatException e){
+                    JOptionPane.showMessageDialog(null, "Insira um caracter válido (Apenas números)!");
                 }
             }
         }
@@ -71,11 +89,18 @@ public class Oficina {
     public static void menuCliente() {
         boolean holder = true;
         while(holder == true){
+            
             try{
-            int seletor = Integer.parseInt(JOptionPane.showInputDialog(null, "1-Acompanhar serviço\n2-Imprimir relatório\n3-Pagamento\n4-Requerer Comprovante de Pagamento\n5- Solicitações de Manutenção\n\n\n\n9-Voltar"));
+            int seletor = 0;
+            String strSeletor = JOptionPane.showInputDialog(null, "1-Acompanhar serviço\n2-Imprimir relatório\n3-Pagamento\n4-Requerer Comprovante de Pagamento\n5- Solicitações de Manutenção\n\n\n\n9-Voltar");
+            if(strSeletor == null){
+                seletor = 9;
+            }else{
+            seletor = Integer.parseInt(strSeletor);
+            }
             switch (seletor) {
                 case 1:
-
+                    acompanhaServico();
                     break;
                 case 2:
                     break;
@@ -91,16 +116,111 @@ public class Oficina {
                 }
             }
             catch(NumberFormatException e){
-            JOptionPane.showMessageDialog(null, "Insira uma valor válido!");
+            JOptionPane.showMessageDialog(null, "Insira uma valor válido (apenas números)!");
             }
         }
     }
+
+    public static void acompanhaServico() {
+        try {
+            // Solicita o número do ID do serviço a ser acompanhado
+            int idServico = Integer.parseInt(JOptionPane.showInputDialog(null, "Informe o número do serviço a ser acompanhado: "));
     
+            // Monta o caminho do arquivo com base no ID do serviço
+            String caminhoArquivo = caminhoFila + idServico + ".txt";
+    
+            // Cria um BufferedReader para ler o arquivo
+            BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo));
+    
+            // Lê as informações do arquivo
+            RegCar carro = new RegCar();
+            carro.nomeCarro = br.readLine();
+            carro.marca = br.readLine();
+            carro.ano = Integer.parseInt(br.readLine());
+            carro.tipoServiço = Integer.parseInt(br.readLine());
+    
+            // Fecha o BufferedReader
+            br.close();
+    
+            // Exibe as informações do veículo
+            JOptionPane.showMessageDialog(null, "Detalhes do Serviço:\n\n" +
+                    "Modelo do Carro: " + carro.nomeCarro + "\n" +
+                    "Marca: " + carro.marca + "\n" +
+                    "Ano: " + carro.ano + "\n" +
+                    "Tipo de Serviço: " + carro.tipoServiço);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Erro ao ler o arquivo.");
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Número de serviço inválido.");
+        }
+    }
+
+    private static void editCar(String A) {
+        boolean holder = true;
+        while(holder == true){
+            String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados base\n2-Criar requerimento\n9-Voltar");
+            int seletor = 0;
+            if(strSeletor == null){
+                seletor = 9;
+            }else{
+                seletor = Integer.parseInt(strSeletor);
+            }
+            try{
+                int seleCar = 0;
+            switch (seletor) {
+                case 1:
+                    seleCar = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                    PrintWriter pw1 = new PrintWriter(caminhoFila + seleCar + ".txt");
+                    pw1.println(JOptionPane.showInputDialog("Insira o modelo do carro:"));
+                    pw1.println(JOptionPane.showInputDialog("Insira a marca do carro:"));
+                    pw1.println(JOptionPane.showInputDialog("Insira o ano do carro:"));
+                    pw1.println(JOptionPane.showInputDialog("Insira o tipo de serviço:"));
+                    pw1.flush();
+                    pw1.close();
+                    JOptionPane.showMessageDialog(null, "Alteração realizada com sucesso!");
+                    break;
+                case 2:
+                    seleCar = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                    RegCar holderCar = new RegCar();
+                    BufferedReader br = new BufferedReader(new FileReader(caminhoFila + seleCar + ".txt"));
+                    holderCar.nomeCarro = br.readLine();
+                    holderCar.marca = br.readLine();
+                    holderCar.ano = Integer.parseInt(br.readLine());
+                    holderCar.tipoServiço = Integer.parseInt(br.readLine());
+                    holderCar.necessidadeRequerimento = JOptionPane.showInputDialog(null, "Insira a condição do requerimento: ");
+                    br.close();
+                    PrintWriter pw2 = new PrintWriter(caminhoFila + seleCar + ".txt");
+                    pw2.println(holderCar.nomeCarro);
+                    pw2.println(holderCar.marca);
+                    pw2.println(holderCar.ano);
+                    pw2.println(holderCar.tipoServiço);
+                    pw2.println("Condição de Requerimento: " + holderCar.necessidadeRequerimento);
+                    pw2.flush();
+                    pw2.close();
+                    break;
+                case 9:
+                    holder = false;
+                    break;
+                }
+            }catch(NumberFormatException | IOException e){
+                JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
+            }
+        }
+    }
+
     public static void addCar() {
         boolean holder = true;
         while(holder == true){
+        String strSeletor = JOptionPane.showInputDialog(null,"1-Adicionar veículo\n\n\n\n\n9-Voltar");
+        int seletor;
+        if(strSeletor == null){
+        seletor = 9;
+        }else{
+            seletor = Integer.parseInt(strSeletor);
+        }
+
         try{
-        int seletor = Integer.parseInt(JOptionPane.showInputDialog(null,"1-Adicionar veículo\n2-Editar/Adicionar informações\n\n\n\n\n9-Voltar"));
         switch (seletor) {
             case 1:
                     RegCar addCarro = new RegCar();
@@ -122,26 +242,22 @@ public class Oficina {
                     }
                     
                 break;
-            case 2:
-                    
-                break;
             case 9:
                 holder = false;
                 return;
             }
         }
         catch(NumberFormatException e){
-            JOptionPane.showMessageDialog(null, "Insira uma valor válido!");
+            JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
             }
         }
     }
 
-    public static void editCar() {
+    public static String listCar() {
         File dir = new File(caminhoFila);
         String[] arquivosFila = dir.list();
         RegCar car = new RegCar();
         String exibir = "";
-    
         if (arquivosFila != null && arquivosFila.length > 0) {
             for (int i = 0; i < arquivosFila.length; i++) {
                 String input = arquivosFila[i].substring(0, arquivosFila[i].indexOf(".txt"));
@@ -150,7 +266,7 @@ public class Oficina {
                     try {
                         int carNumber = Integer.parseInt(input);
                         car = lerCar(car, carNumber);
-                        exibir = exibir + "\n" + input + car.nomeCarro;
+                        exibir = exibir + "\n" + input + " " + car.nomeCarro;
                     } catch (NumberFormatException e) {
                         JOptionPane.showMessageDialog(null, "Erro ao converter o número do carro.");
                     }
@@ -159,7 +275,7 @@ public class Oficina {
         } else {
             JOptionPane.showMessageDialog(null, "Não há carros registrados para editar.");
         }
-        JOptionPane.showMessageDialog(null, exibir);
+        return exibir;
     }
 
     public static boolean addTxt(RegCar Carro) throws FileNotFoundException{
@@ -229,8 +345,8 @@ public class Oficina {
 
     private static RegCar lerCar(RegCar A, int B){
         try {
-            File arquivo = new File(B + ".txt");
-    
+            
+            File arquivo = new File(caminhoFila + B + ".txt");
             // Verifica se o arquivo existe antes de tentar ler
             if (arquivo.exists()) {
                 BufferedReader br = new BufferedReader(new FileReader(arquivo));
