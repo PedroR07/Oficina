@@ -122,32 +122,55 @@ public class Oficina {
     }
 
     public static void acompanhaServico() {
+        
         try {
-            // Solicita o número do ID do serviço a ser acompanhado
-            int idServico = Integer.parseInt(JOptionPane.showInputDialog(null, "Informe o número do serviço a ser acompanhado: "));
-    
-            // Monta o caminho do arquivo com base no ID do serviço
-            String caminhoArquivo = caminhoFila + idServico + ".txt";
-    
-            // Cria um BufferedReader para ler o arquivo
-            BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo));
-    
-            // Lê as informações do arquivo
+            Boolean pend = false;
+            String A = listCar();
+            int idServico = Integer.parseInt(JOptionPane.showInputDialog(null, "\nSelecione o serviço a ser acompanhado: " + A));
+            BufferedReader br = new BufferedReader(new FileReader(caminhoFila + idServico + ".txt"));
             RegCar carro = new RegCar();
             carro.nomeCarro = br.readLine();
             carro.marca = br.readLine();
             carro.ano = Integer.parseInt(br.readLine());
             carro.tipoServiço = Integer.parseInt(br.readLine());
+            System.out.println(carro.necessidadeRequerimento);
+            if(!"holder".equals(carro.necessidadeRequerimento)){
+                pend =  true;
+            }
+            carro.status = Integer.parseInt(br.readLine());
     
-            // Fecha o BufferedReader
             br.close();
+            String statReal = "";
+            switch (carro.status) {
+                case 0:
+                    statReal = "Em espera.";
+                    break;
+                case 1:
+                    statReal = "Em execução.";
+                    break;
+                case 2:
+                    statReal = "Finalizado.";
+                    break;
+            }
     
             // Exibe as informações do veículo
+            if(pend == true){
             JOptionPane.showMessageDialog(null, "Detalhes do Serviço:\n\n" +
                     "Modelo do Carro: " + carro.nomeCarro + "\n" +
                     "Marca: " + carro.marca + "\n" +
                     "Ano: " + carro.ano + "\n" +
-                    "Tipo de Serviço: " + carro.tipoServiço);
+                    "Tipo de Serviço: " + carro.tipoServiço + "\n" +
+                    "Você tem pedidos pendentes de requerimento!" + "\n" +
+                    "Status do serviço: " + statReal);
+            }else{
+                JOptionPane.showMessageDialog(null, "Detalhes do Serviço:\n\n" +
+                "Modelo do Carro: " + carro.nomeCarro + "\n" +
+                "Marca: " + carro.marca + "\n" +
+                "Ano: " + carro.ano + "\n" +
+                "Tipo de Serviço: " + carro.tipoServiço + "\n" +
+                "Você não tem pedidos pendentes de requerimento!" + "\n" +
+                "Status do serviço: " + statReal);
+            }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro ao ler o arquivo.");
             e.printStackTrace();
@@ -159,7 +182,7 @@ public class Oficina {
     private static void editCar(String A) {
         boolean holder = true;
         while(holder == true){
-            String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados base\n2-Criar requerimento\n9-Voltar");
+            String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados base\n2-Alterar status\n3-Criar requerimento\n9-Voltar");
             int seletor = 0;
             if(strSeletor == null){
                 seletor = 9;
@@ -167,38 +190,85 @@ public class Oficina {
                 seletor = Integer.parseInt(strSeletor);
             }
             try{
-                int seleCar = 0;
+            
             switch (seletor) {
                 case 1:
-                    seleCar = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
-                    PrintWriter pw1 = new PrintWriter(caminhoFila + seleCar + ".txt");
+                    int seleCar1 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                    PrintWriter pw1 = new PrintWriter(caminhoFila + seleCar1 + ".txt");
                     pw1.println(JOptionPane.showInputDialog("Insira o modelo do carro:"));
                     pw1.println(JOptionPane.showInputDialog("Insira a marca do carro:"));
                     pw1.println(JOptionPane.showInputDialog("Insira o ano do carro:"));
                     pw1.println(JOptionPane.showInputDialog("Insira o tipo de serviço:"));
+                    pw1.println("holder");
+                    pw1.println(JOptionPane.showInputDialog("Insira o status do serviço: "));
                     pw1.flush();
                     pw1.close();
-                    JOptionPane.showMessageDialog(null, "Alteração realizada com sucesso!");
+                    JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
                     break;
                 case 2:
-                    seleCar = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
-                    RegCar holderCar = new RegCar();
-                    BufferedReader br = new BufferedReader(new FileReader(caminhoFila + seleCar + ".txt"));
-                    holderCar.nomeCarro = br.readLine();
-                    holderCar.marca = br.readLine();
-                    holderCar.ano = Integer.parseInt(br.readLine());
-                    holderCar.tipoServiço = Integer.parseInt(br.readLine());
-                    holderCar.necessidadeRequerimento = JOptionPane.showInputDialog(null, "Insira a condição do requerimento: ");
+                    int seleCar2 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                    RegCar holderCart = new RegCar();
+                    BufferedReader br = new BufferedReader(new FileReader(caminhoFila + seleCar2 + ".txt"));
+                    holderCart.nomeCarro = br.readLine();
+                    holderCart.marca = br.readLine();
+                    holderCart.ano = Integer.parseInt(br.readLine());
+                    holderCart.tipoServiço = Integer.parseInt(br.readLine());
+                    holderCart.necessidadeRequerimento = br.readLine();
+                    holderCart.status = Integer.parseInt(JOptionPane.showInputDialog(null, "Atualize o serviço:\n0-Em espera\n1-Em execução\n2-Concluído"));
                     br.close();
-                    PrintWriter pw2 = new PrintWriter(caminhoFila + seleCar + ".txt");
-                    pw2.println(holderCar.nomeCarro);
-                    pw2.println(holderCar.marca);
-                    pw2.println(holderCar.ano);
-                    pw2.println(holderCar.tipoServiço);
-                    pw2.println("Condição de Requerimento: " + holderCar.necessidadeRequerimento);
+                    PrintWriter pw2 = new PrintWriter(caminhoFila + seleCar2 + ".txt");
+                    pw2.println(holderCart.nomeCarro);
+                    pw2.println(holderCart.marca);
+                    pw2.println(holderCart.ano);
+                    pw2.println(holderCart.tipoServiço);
+                    pw2.println(holderCart.necessidadeRequerimento);
+                    pw2.println(holderCart.status);
                     pw2.flush();
                     pw2.close();
+                    JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
                     break;
+                    case 3:
+                    int seleCar3 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                    RegCar holderCar2 = new RegCar();
+                    BufferedReader br2 = new BufferedReader(new FileReader(caminhoFila + seleCar3 + ".txt"));
+                    holderCar2.nomeCarro = br2.readLine();
+                    holderCar2.marca = br2.readLine();
+                    holderCar2.ano = Integer.parseInt(br2.readLine());
+                    holderCar2.tipoServiço = Integer.parseInt(br2.readLine());
+                
+                    // Leia a linha e mantenha o valor atual se começar com "Requerimento:"
+                    String requerimentoInput = br2.readLine();
+                    if (requerimentoInput != null && requerimentoInput.startsWith("Requerimento:")) {
+                        holderCar2.necessidadeRequerimento = requerimentoInput;
+                    } else {
+                        holderCar2.necessidadeRequerimento = "Requerimento:" + requerimentoInput;
+                    }
+                
+                    holderCar2.status = Integer.parseInt(br2.readLine());
+                    br2.close();
+                
+                    // Solicite a edição do requerimento
+                    String novoRequerimento = JOptionPane.showInputDialog("Insira o novo requerimento:");
+                
+                    PrintWriter pw3 = new PrintWriter(caminhoFila + seleCar3 + ".txt");
+                    pw3.println(holderCar2.nomeCarro);
+                    pw3.println(holderCar2.marca);
+                    pw3.println(holderCar2.ano);
+                    pw3.println(holderCar2.tipoServiço);
+                
+                    // Adicione "Requerimento:" apenas se houver um requerimento
+                    if (novoRequerimento != null && !novoRequerimento.isEmpty()) {
+                        pw3.println("Requerimento:" + novoRequerimento);
+                    } else {
+                        pw3.println("holder");
+                    }
+                
+                    pw3.println(holderCar2.status);
+                    pw3.flush();
+                    pw3.close();
+                    JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
+                    break;
+                
                 case 9:
                     holder = false;
                     break;
@@ -210,25 +280,13 @@ public class Oficina {
     }
 
     public static void addCar() {
-        boolean holder = true;
-        while(holder == true){
-        String strSeletor = JOptionPane.showInputDialog(null,"1-Adicionar veículo\n\n\n\n\n9-Voltar");
-        int seletor;
-        if(strSeletor == null){
-        seletor = 9;
-        }else{
-            seletor = Integer.parseInt(strSeletor);
-        }
-
         try{
-        switch (seletor) {
-            case 1:
                     RegCar addCarro = new RegCar();
                     addCarro.nomeCarro = JOptionPane.showInputDialog(null, "Informe o modelo do carro: ");
                     addCarro.marca = JOptionPane.showInputDialog(null, "Informe a marca do carro: ");
                     addCarro.ano = Integer.parseInt(JOptionPane.showInputDialog(null, "Informe o ano do carro: "));
-                    addCarro.tipoServiço = Integer.parseInt(JOptionPane.showInputDialog(null, "Especifique os serviços as serem prestados:\n1- Alinhamento\n2-Balanceamento\n3-Revisão"));
-                    
+                    addCarro.tipoServiço = Integer.parseInt(JOptionPane.showInputDialog(null, "Especifique os serviços as serem prestados:\n1-Alinhamento\n2-Balanceamento\n3-Revisão"));
+                    addCarro.status = Integer.parseInt(JOptionPane.showInputDialog(null, "O pedido já entrará em execução?\n0-Não\n1-Sim"));
                     try{
                         if(iD < 10){
                             addTxt(addCarro);
@@ -240,18 +298,11 @@ public class Oficina {
                     catch(FileNotFoundException e){
                         JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
                     }
-                    
-                break;
-            case 9:
-                holder = false;
-                return;
-            }
         }
         catch(NumberFormatException e){
             JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
-            }
         }
-    }
+        }
 
     public static String listCar() {
         File dir = new File(caminhoFila);
@@ -285,6 +336,8 @@ public class Oficina {
         pw.println(Carro.marca);
         pw.println(Carro.ano);
         pw.println(Carro.tipoServiço);
+        pw.println("holder");
+        pw.println(Carro.status);
         pw.flush();
         pw.close();
         JOptionPane.showMessageDialog(null, "Veículo registrado com sucesso!");
@@ -377,13 +430,14 @@ public class Oficina {
 //Logs:
 
 //====================================================================================================//
-//Atualização 1.1: 10 de Dezembro de 2023 - Sistema de Registros de Veículos
-//Adição do Sistema de Registros de Carros
+//Atualização (Beta) 1.2: 14 de Dezembro de 2023 - Sistema de Edição de Dados e Acompanhamento Por Parte Cliente
+//Adição do Sistema de Edição de Dados e Acompanhamento Por Parte do Cliente
 //====================================================================================================//
 
-// -> Função de adicionar veículos com um limite de 10(a ser revisada na próxima atualização);
+// -> Tratamento de erros para todos os menus;
 
-// -> Registrador de ID respectivo ao carro anterior registrado,
-// mantendo a sessão atualizada (se você criou o registro "Carro 1", na próxima execução do programa,
-// ele registrará o novo carro como "Carro 2", por exemplo.
-// O mesmo vale caso só registre o novo carro sem sair da execução);
+// -> Limitador de registro de ID até 10;
+
+// -> Implementação de um sistema de acompanhamento por parte do usuário;
+
+// -> Sistema de edição dos carros registrados, incluindo estado do serviço e pedidos de requerimento;
