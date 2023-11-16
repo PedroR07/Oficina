@@ -11,5 +11,7 @@ public class RegCar {
     
     String necessidadeRequerimento;
     int status;
+    String nomeCliente;
+    String numTel;
 }
 
