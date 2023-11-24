@@ -50,7 +50,7 @@ public class Oficina {
             
             try{
             int seletor = 0;
-            String strSeletor = JOptionPane.showInputDialog(null, "1-Registrar carro\n2-Alterar/Relatar observações\n3-Lista de Espera\n5-Saldo\n\n\n\n9-Voltar");
+            String strSeletor = JOptionPane.showInputDialog(null, "1-Registrar carro\n2-Alterar/Relatar observações\n3-Lista de Espera\n\n\n\n9-Voltar");
             if(strSeletor == null){
                 seletor = 9;
             }else{
@@ -85,7 +85,7 @@ public class Oficina {
             
             try{
             int seletor = 0;
-            String strSeletor = JOptionPane.showInputDialog(null, "1-Acompanhar serviço\n2-Imprimir relatório\n3-Pagamento\n4-Requerer Comprovante de Pagamento\n5- Solicitações de Manutenção\n\n\n\n9-Voltar");
+            String strSeletor = JOptionPane.showInputDialog(null, "1- Acompanhar serviço\n2- Comprovantes\n3- Solicitações de Manutenção\n\n\n\n9-Voltar");
             if(strSeletor == null){
                 seletor = 9;
             }else{
@@ -96,12 +96,9 @@ public class Oficina {
                     acompanhaServico();
                     break;
                 case 2:
+                    imprimeComprovantes();
                     break;
                 case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
                     break;
                 case 9:
                 holder = false;
@@ -119,7 +116,7 @@ public class Oficina {
         try {
             Boolean pend = false;
             String A = listCar();
-            int idServico = Integer.parseInt(JOptionPane.showInputDialog(null, "\nSelecione o serviço a ser acompanhado: " + A));
+            int idServico = Integer.parseInt(JOptionPane.showInputDialog(null, "\nSelecione o serviço a ser acompanhado:\n" + A));
             BufferedReader br = new BufferedReader(new FileReader(caminhoFila + idServico + ".txt"));
             RegCar carro = new RegCar();
             carro.nomeCarro = br.readLine();
@@ -356,7 +353,11 @@ public class Oficina {
     }
     
     private static void startCaminho(String caminhoFila) {
-		File dir=new File(caminhoFila);
+		File dirRel=new File(caminhoRel);
+		if(!dirRel.exists()) {
+			dirRel.mkdir();
+		}
+        File dir=new File(caminhoFila);
 		if(!dir.exists()) {
 			dir.mkdir();
 		}
@@ -369,6 +370,7 @@ public class Oficina {
 				e.printStackTrace();
 			}
         }
+        
     }
 
     private static void gravarId() {
@@ -438,6 +440,146 @@ public class Oficina {
         JOptionPane.showMessageDialog(null, listExibir);
     }
     
+    private static void imprimeComprovantes() {
+        boolean holder = true;
+        while (holder) {
+            try {
+                int seletor = 0;
+                String strSeletor = JOptionPane.showInputDialog(null, "1- Imprimir Boleto\n2- Imprimir Relatório\n\n\n\n9-Voltar");
+                if (strSeletor == null) {
+                    seletor = 9;
+                } else {
+                    seletor = Integer.parseInt(strSeletor);
+                }
+                switch (seletor) {
+                    case 1:
+                        int carroNum = Integer.parseInt(JOptionPane.showInputDialog("Selecione o veículo:\n" + listCar()));
+                        int valLiq = 0;
+                        int valExt = 0;
+                        RegCar carroSelec = new RegCar();
+                        carroSelec = pegaContato(carroNum, carroSelec);
+                        PrintWriter pw = new PrintWriter(caminhoRel + "Boleto" + (carroNum) + ".txt");
+                        pw.println("====================================================");
+                        pw.println("====================================================");
+                        pw.println("Auto-Mecânica Souza & Rocha | " + java.time.LocalDate.now());
+                        pw.println("====================================================");
+                        pw.println("Dados dos Clientes: ");
+                        pw.println(" ");
+                        pw.println("Nome: " + carroSelec.nomeCliente + " | " + "Telefone: " + carroSelec.numTel);
+                        pw.println("====================================================");
+                        pw.println("Descrição dos Serviços:");
+                        pw.println(" ");
+                        pw.println("Nome: " + carroSelec.nomeCarro + " | " + "Ano: " + carroSelec.ano + " | " + "Marca: " + carroSelec.marca);
+                        if(carroSelec.tipoServiço == 12 || carroSelec.tipoServiço == 21){
+                            pw.println("Alinhamento e Balanceamento");
+                            valLiq = 100;
+                        }else{
+                            if(carroSelec.tipoServiço == 13 || carroSelec.tipoServiço == 31){
+                                pw.println("Alinhamento e Revisão.");
+                                valLiq = 100;
+                        }else{
+                            if(carroSelec.tipoServiço == 23 || carroSelec.tipoServiço == 21){
+                                pw.println("Balanceamento e Revisão.");
+                                valLiq = 100;
+                            }else{
+                                if(carroSelec.tipoServiço == 123 || carroSelec.tipoServiço == 132 || carroSelec.tipoServiço == 213 || carroSelec.tipoServiço == 231 || carroSelec.tipoServiço == 312 || carroSelec.tipoServiço == 321){
+                                    pw.println("Alinhamento, Balanceamento e Revisão.");
+                                    valLiq = 150;
+                                }else{
+                                    switch (carroSelec.tipoServiço) {
+                                        case 1:
+                                            pw.println("Alinhamento.");
+                                            valLiq = 50;
+                                            break;
+                                        case 2:
+                                            pw.println("Balanceamento.");
+                                            valLiq = 50;
+                                            break;
+                                        case 3:
+                                            pw.println("Revisão");
+                                            valLiq = 50;
+                                            break;
+                                    }
+                                }
+                                }
+                            }
+                        }
+                        if(!"holder".equals(carroSelec.necessidadeRequerimento)){
+                            pw.println("Extras: Sim");
+                            valExt = 50;
+                            
+                        }else{
+                            pw.println("Extras: Não");
+                        }
+                        pw.println(" ");
+                        pw.println("====================================================");
+                        pw.println("====================================================");
+                        pw.println("Valor Líquido: R$" + valLiq + " | " + "Extras: R$" + valExt + " | " + "Total: R$" + (valLiq + valExt));
+                        pw.println("====================================================");
+                        pw.flush();
+                        pw.close();
+                        JOptionPane.showMessageDialog(null, "O boleto foi gerado com sucesso.");
+                        break;
+                        case 2:
+                        int carroNum2 = Integer.parseInt(JOptionPane.showInputDialog("Selecione o veículo:\n" + listCar()));
+                        RegCar carroSelec2 = new RegCar();
+                        carroSelec2 = pegaContato(carroNum2, carroSelec2);
+                        PrintWriter pw2 = new PrintWriter(caminhoRel + "Relatório" + (carroNum2) + ".txt");
+                        pw2.println("====================================================");
+                        pw2.println("====================================================");
+                        pw2.println("Auto-Mecânica Souza & Rocha | " + java.time.LocalDate.now());
+                        pw2.println("====================================================");
+                        pw2.println("Descrição dos Serviços:");
+                        pw2.println(" ");
+                        pw2.println("Nome: " + carroSelec2.nomeCarro + " | " + "Ano: " + carroSelec2.ano + " | " + "Marca: " + carroSelec2.marca);
+                        if(carroSelec2.tipoServiço == 12 || carroSelec2.tipoServiço == 21){
+                            pw2.println("Alinhamento e Balanceamento");
+                        }else{
+                            if(carroSelec2.tipoServiço == 13 || carroSelec2.tipoServiço == 31){
+                                pw2.println("Alinhamento e Revisão.");
+                        }else{
+                            if(carroSelec2.tipoServiço == 23 || carroSelec2.tipoServiço == 21){
+                                pw2.println("Balanceamento e Revisão.");
+                            }else{
+                                if(carroSelec2.tipoServiço == 123 || carroSelec2.tipoServiço == 132 || carroSelec2.tipoServiço == 213 || carroSelec2.tipoServiço == 231 || carroSelec2.tipoServiço == 312 || carroSelec2.tipoServiço == 321){
+                                    pw2.println("Alinhamento, Balanceamento e Revisão.");
+                                }else{
+                                    switch (carroSelec2.tipoServiço) {
+                                        case 1:
+                                            pw2.println("Alinhamento.");
+                                            break;
+                                        case 2:
+                                            pw2.println("Balanceamento.");
+                                            break;
+                                        case 3:
+                                            pw2.println("Revisão");
+                                            break;
+                                    }
+                                }
+                                }
+                            }
+                        }
+                        if(!"holder".equals(carroSelec2.necessidadeRequerimento)){
+                            pw2.println("\nServiço Extra: " + carroSelec2.necessidadeRequerimento);
+                        }else{
+                            pw2.println("Extras: Não houve serviço extra");
+                        }
+                        pw2.println(" ");
+                        pw2.println("====================================================");
+                        pw2.flush();
+                        pw2.close();
+                        JOptionPane.showMessageDialog(null, "O relatório foi gerado com sucesso.");
+                        break;
+                    case 9:
+                        holder = false;
+                        break;
+                }
+            } catch (NumberFormatException | IOException e) {
+                JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
+            }
+        }
+    }
+    public static String caminhoRel  = "Relatórios/";
     
     public static String caminhoFila = "Fila/";
     //Variável global da localização da fila/registro de carros.
@@ -445,18 +587,3 @@ public class Oficina {
     public static int iD = 0;
     //Variável global de identação do arquivo mais recente editado em sessão anterior.
 }
-
-//Logs:
-
-//====================================================================================================//
-//Atualização (Beta) 1.2: 14 de Dezembro de 2023 - Sistema de Edição de Dados e Acompanhamento Por Parte Cliente
-//Adição do Sistema de Edição de Dados e Acompanhamento Por Parte do Cliente
-//====================================================================================================//
-
-// -> Tratamento de erros para todos os menus;
-
-// -> Limitador de registro de ID até 10;
-
-// -> Implementação de um sistema de acompanhamento por parte do usuário;
-
-// -> Sistema de edição dos carros registrados, incluindo estado do serviço e pedidos de requerimento;
