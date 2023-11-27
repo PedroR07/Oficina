@@ -11,7 +11,6 @@ public class Oficina {
     
     //Main
     public static void main(String[] args) {
-        organizador();
         startCaminho(caminhoFila);
         lerId();
         menuGeral();
@@ -316,7 +315,7 @@ public class Oficina {
                         }
                     }
                     catch(FileNotFoundException e){
-                        JOptionPane.showMessageDialog(null, "A");
+                        JOptionPane.showMessageDialog(null, "Ocorreu algum erro no registro do carro.");
                     }
         }
         catch(NumberFormatException e){
@@ -500,10 +499,10 @@ public class Oficina {
                 }
             }
             else{
-                JOptionPane.showMessageDialog(null, "Arquivo inexistente.");
+                JOptionPane.showMessageDialog(null, "Não há falhas excepcionais.");
             }
         }catch (IOException e){
-            JOptionPane.showMessageDialog(null, "B");
+            JOptionPane.showMessageDialog(null, "Ocorreu algum erro na aprovação das requisições.");
         }
     }
 
@@ -548,14 +547,14 @@ public class Oficina {
                 }
             }
             carro.necessidadeRequerimento = br.readLine();
-            File necReq = new File(caminhoReq + idServico + ".txt/");
-            if(necReq.exists()){
-                pend =  true;
-            }
             carro.status = Integer.parseInt(br.readLine());
             carro.nomeCliente = br.readLine();
             carro.numTel = br.readLine();
             carro.idReq = br.readLine();
+            File necReq = new File(caminhoReq + carro.idReq + ".txt/");
+            if(necReq.exists()){
+                pend =  true;
+            }
             br.close();
             String statReal = "";
             switch (carro.status) {
@@ -644,7 +643,7 @@ public class Oficina {
         br.close();
         }
         catch (IOException e){
-            JOptionPane.showMessageDialog(null, "C");
+            JOptionPane.showMessageDialog(null, "Ocorreu algum erro na leitura dos dados do carro.");
         }
         return contPass;
     }
@@ -697,7 +696,7 @@ public class Oficina {
             try {
                 arquivo.createNewFile();
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "D");
+                JOptionPane.showMessageDialog(null, "Ocorreu algum erro na inizalização dos diretórios.");
                 e.printStackTrace();
                 //Tratamento de erro.
 
@@ -731,7 +730,7 @@ public class Oficina {
             pw.flush();
             pw.close();
         }catch(IOException e){
-            JOptionPane.showMessageDialog(null, "E");
+            JOptionPane.showMessageDialog(null, "Ocorreu algum erro na organização dos dados.");
         }
     }
 
