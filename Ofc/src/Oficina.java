@@ -17,10 +17,10 @@ public class Oficina {
     }
     
  ///////////////////////////////////////////////////////////////////////////////
- //                       Blocos dos Principais Menus
+ //                       Blocos dos Principais Menus                         //
  ///////////////////////////////////////////////////////////////////////////////
     
-    public static void menuGeral() {
+    private static void menuGeral() {
         boolean segurador = true;
         //Variável controladora do loop while.
 
@@ -68,7 +68,7 @@ public class Oficina {
             }
         }
     
-    public static void menuGestor() {
+    private static void menuGestor() {
         boolean segurador = true;
         while (segurador) {
             
@@ -103,7 +103,7 @@ public class Oficina {
             }
         }
 
-    public static void menuCliente() {
+    private static void menuCliente() {
         boolean segurador = true;
         while(segurador == true){
             
@@ -137,11 +137,11 @@ public class Oficina {
 
 
  ///////////////////////////////////////////////////////////////////////////////
- //                          Blocos de Operações
+ //                          Blocos de Operações                              //
  ///////////////////////////////////////////////////////////////////////////////
 
 
-    public static void acompanhaServico() {
+    private static void acompanhaServico() {
         
         try {
             Boolean pend = false;
@@ -205,7 +205,7 @@ public class Oficina {
         boolean segurador = true;
         while(segurador == true){
             String A = listCar();
-            String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados base\n2-Alterar status\n3-Criar requerimento\n9-Voltar");
+            String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados base\n2-Alterar status\n3-Criar requerimento\n4-Deletar aquivo\n9-Voltar");
             int seletor = 0;
             if(strSeletor == null){
                 seletor = 9;
@@ -286,7 +286,12 @@ public class Oficina {
                     pw3.close();
                     JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
                     break;
-                
+                case 4:
+                    int seleCar4 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                    File delete = new File(caminhoFila + seleCar4 + ".txt/");
+                    delete.delete();
+                    organizador();
+                    break;
                 case 9:
                     segurador = false;
                     break;
@@ -297,7 +302,7 @@ public class Oficina {
         }
     }
 
-    public static void registraCar() {
+    private static void registraCar() {
         try{
                     RegCar addCarro = new RegCar();
                     addCarro.nomeCarro = JOptionPane.showInputDialog(null, "Informe o modelo do carro: ");
@@ -308,8 +313,21 @@ public class Oficina {
                     addCarro.nomeCliente = JOptionPane.showInputDialog(null, "Informe o nome do cliente:");
                     addCarro.numTel = JOptionPane.showInputDialog(null, "Informe o telefone do cliente:");
                     try{
+                        int iD = lerId();
                         if(iD < 10){
-                            addId(addCarro);
+                            PrintWriter pw = new PrintWriter(caminhoFila + (iD) + ".txt");
+                            pw.println(addCarro.nomeCarro);
+                            pw.println(addCarro.marca);
+                            pw.println(addCarro.ano);
+                            pw.println(addCarro.tipoServiço);
+                            pw.println("segurador");
+                            pw.println(addCarro.status);
+                            pw.println(addCarro.nomeCliente);
+                            pw.println(addCarro.numTel);
+                            pw.flush();
+                            pw.close();
+                            JOptionPane.showMessageDialog(null, "Veículo registrado com sucesso!");
+                            organizador();
                         }
                         else{
                             JOptionPane.showMessageDialog(null, "O sistema atingiu o limite de carros por dia.");
@@ -324,7 +342,7 @@ public class Oficina {
         }
         }
 
-    public static String listCar() {
+    private static String listCar() {
         File dir = new File(caminhoFila);
         String[] arquivosFila = dir.list();
         RegCar car = new RegCar();
@@ -365,24 +383,6 @@ public class Oficina {
         
         return exibir.toString();
     }
-
-    public static boolean addId(RegCar Carro) throws FileNotFoundException{
-        lerId();
-        PrintWriter pw = new PrintWriter(caminhoFila + (iD) + ".txt");
-        pw.println(Carro.nomeCarro);
-        pw.println(Carro.marca);
-        pw.println(Carro.ano);
-        pw.println(Carro.tipoServiço);
-        pw.println("segurador");
-        pw.println(Carro.status);
-        pw.println(Carro.nomeCliente);
-        pw.println(Carro.numTel);
-        pw.flush();
-        pw.close();
-        JOptionPane.showMessageDialog(null, "Veículo registrado com sucesso!");
-        gravarId();
-        return false;
-    }
     
     private static void startCaminho(String caminhoFila) {
 		File dirRel=new File(caminhoRel);
@@ -405,25 +405,8 @@ public class Oficina {
         
     }
 
-    private static void gravarId() {
-        PrintWriter pw;
-		try {
-            if((iD+1) <= 10){
-            pw = new PrintWriter("id.txt");
-			pw.println((iD+1));
-			pw.flush();
-			pw.close();
-        }
-        else{
-            JOptionPane.showMessageDialog(null, "Não há mais espaço na fila para armazenar novos veículos.");
-        }
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	
-	}
-
-    private static void lerId() {
+    private static int lerId() {
+        int iD = 0;
         try{
         BufferedReader br = new BufferedReader(new FileReader("id.txt"));
         String A = br.readLine();
@@ -438,9 +421,10 @@ public class Oficina {
         catch(IOException e){
             JOptionPane.showMessageDialog(null, "Não foi possível ler o arquivo.");
         }
+        return iD;
     }
 
-    public static RegCar lerCar(int i, RegCar contPass){
+    private static RegCar lerCar(int i, RegCar contPass){
         File arquivo = new File(caminhoFila + i + ".txt");
         try{
         BufferedReader br = new BufferedReader(new FileReader(arquivo));
@@ -460,14 +444,14 @@ public class Oficina {
         return contPass;
     }
     
-    public static void listClient() {
+    private static void listClient() {
         RegCar contClient = new RegCar();
         File dir = new File(caminhoFila);
         String[] listaDir = dir.list();
         String listExibir = "";
         for (int i = 0; i < listaDir.length; i++) {
             lerCar((i+1), contClient);
-            listExibir = listExibir + (i+1) + "- " + contClient.nomeCarro + " - " + contClient.nomeCliente + " - " + contClient.numTel + "\n";
+            listExibir = listExibir + (i+1) + "- " + "Carro: " + contClient.nomeCarro + " - "+ "Cliente: " + contClient.nomeCliente + " - " + "Tel: " + contClient.numTel + "\n";
         }
         JOptionPane.showMessageDialog(null, listExibir);
     }
@@ -612,10 +596,27 @@ public class Oficina {
         }
     }
     
-    public static String caminhoRel  = "Relatórios/";
+    private static void organizador(){
+        File dir = new File(caminhoFila);
+        String[] listR = dir.list();
+        for(int i = 0; i < listR.length; i++){
+            File selecCar = new File(caminhoFila + listR[i]);
+            File orgCar = new File(caminhoFila + (i+1) + ".txt");
+            selecCar.renameTo(orgCar);
+        }
+        try{
+            File sobscreveId = new File("id.txt");
+            PrintWriter pw = new PrintWriter(sobscreveId);
+            pw.print((listR.length + 1));
+            pw.flush();
+            pw.close();
+        }catch(IOException e){
+            JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
+        }
+    }
     
-    public static String caminhoFila = "Fila/";
-
-    public static int iD = 0;
+    private static final String caminhoRel  = "Relatórios/";
+    
+    private static final String caminhoFila = "Fila/";
 
 }
