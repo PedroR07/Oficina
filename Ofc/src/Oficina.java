@@ -11,6 +11,7 @@ public class Oficina {
     
     //Main
     public static void main(String[] args) {
+        organizador();
         startCaminho(caminhoFila);
         lerId();
         menuGeral();
@@ -209,6 +210,7 @@ public class Oficina {
                 pw1.println(Integer.toString(carOri.status));
                 pw1.println(JOptionPane.showInputDialog("Insira o nome do cliente: "));
                 pw1.println(JOptionPane.showInputDialog("Insira o número de telefone: "));
+                pw1.println(carOri.idReq);
                 pw1.flush();
                 pw1.close();
                 JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
@@ -225,7 +227,9 @@ public class Oficina {
                 seguradorCart.status = Integer.parseInt(JOptionPane.showInputDialog(null, "Atualize o serviço:\n0-Em espera\n1-Em execução\n2-Concluído"));
                 seguradorCart.nomeCliente = br.readLine();
                 seguradorCart.numTel = br.readLine();
+                seguradorCart.idReq = br.readLine();
                 br.close();
+                System.out.println(seguradorCart.idReq);
                 PrintWriter pw2 = new PrintWriter(caminhoFila + seleCar2 + ".txt");
                 pw2.println(seguradorCart.nomeCarro);
                 pw2.println(seguradorCart.marca);
@@ -235,17 +239,32 @@ public class Oficina {
                 pw2.println(seguradorCart.status);
                 pw2.println(seguradorCart.nomeCliente);
                 pw2.println(seguradorCart.numTel);
+                pw2.println(seguradorCart.idReq);
                 pw2.flush();
                 pw2.close();
                 JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
                 break;
                 case 3:
+                RegCar salvaIdreq = new RegCar();
                 int seleCar3 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                lerCar(seleCar3, salvaIdreq);
                 File savReq = new File(caminhoReq + seleCar3 + ".txt/");
                 PrintWriter pw = new PrintWriter(savReq);
                 pw.print(JOptionPane.showInputDialog(null, "Insira a condição de falha: "));
                 pw.flush();
                 pw.close();
+                PrintWriter pwriter = new PrintWriter(caminhoFila + seleCar3 + ".txt/");
+                pwriter.println(salvaIdreq.nomeCarro);
+                pwriter.println(salvaIdreq.marca);
+                pwriter.println(salvaIdreq.ano);
+                pwriter.println(salvaIdreq.tipoServiço);
+                pwriter.println(salvaIdreq.necessidadeRequerimento);
+                pwriter.println(salvaIdreq.status);
+                pwriter.println(salvaIdreq.nomeCliente);
+                pwriter.println(salvaIdreq.numTel);
+                pwriter.println(seleCar3);
+                pwriter.flush();
+                pwriter.close();
                 JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
                 break;
             case 4:
@@ -286,6 +305,7 @@ public class Oficina {
                             pw.println(addCarro.status);
                             pw.println(addCarro.nomeCliente);
                             pw.println(addCarro.numTel);
+                            pw.println(addCarro.idReq);
                             pw.flush();
                             pw.close();
                             JOptionPane.showMessageDialog(null, "Veículo registrado com sucesso!");
@@ -296,7 +316,7 @@ public class Oficina {
                         }
                     }
                     catch(FileNotFoundException e){
-                        JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
+                        JOptionPane.showMessageDialog(null, "A");
                     }
         }
         catch(NumberFormatException e){
@@ -445,10 +465,13 @@ public class Oficina {
         }
 
     private static void aprovExceps(){
+            RegCar carro = new RegCar();
+
             try{
             String A = listCar();
             int b = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o veículo: " + A));
-            File necReq = new File(caminhoReq + b + ".txt/");
+            lerCar(b, carro);
+            File necReq = new File(caminhoReq + carro.idReq + ".txt/");
             if(necReq.exists()){
                 
                 RegCar carReq = new RegCar();
@@ -467,6 +490,7 @@ public class Oficina {
                 pw.println(carReq.status);
                 pw.println(carReq.nomeCliente);
                 pw.println(carReq.numTel);
+                pw.println(carReq.idReq);
                 pw.flush();
                 pw.close();
                 JOptionPane.showMessageDialog(null, "A manutenção será realizada e o valor \nextra será adicionado a fatura do serviço.");
@@ -479,7 +503,7 @@ public class Oficina {
                 JOptionPane.showMessageDialog(null, "Arquivo inexistente.");
             }
         }catch (IOException e){
-            JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
+            JOptionPane.showMessageDialog(null, "B");
         }
     }
 
@@ -531,6 +555,7 @@ public class Oficina {
             carro.status = Integer.parseInt(br.readLine());
             carro.nomeCliente = br.readLine();
             carro.numTel = br.readLine();
+            carro.idReq = br.readLine();
             br.close();
             String statReal = "";
             switch (carro.status) {
@@ -575,42 +600,13 @@ public class Oficina {
         File dir = new File(caminhoFila);
         String[] arquivosFila = dir.list();
         RegCar car = new RegCar();
-        StringBuilder exibir = new StringBuilder();
-        
-        try {
-            if (arquivosFila != null && arquivosFila.length > 0) {
-                for (int i = 0; i < arquivosFila.length; i++) {
-                    File arquivo = new File(caminhoFila + (i+1) + ".txt");
-        
-                    if (arquivo.exists()) {
-                        BufferedReader br = new BufferedReader(new FileReader(arquivo));
-                        car.nomeCarro = br.readLine();
-                        car.marca = br.readLine();
-                        car.ano = Integer.parseInt(br.readLine());
-                        car.tipoServiço = Integer.parseInt(br.readLine());
-                        car.necessidadeRequerimento = br.readLine();
-                        car.status = Integer.parseInt(br.readLine());
-                        car.nomeCliente = br.readLine();
-                        car.numTel = br.readLine();
-        
-                        exibir.append(i+1).append("- ").append(car.nomeCarro).append("\n");
-        
-                        br.close();
-                    } else {
-                        // Arquivo não existe
-                        exibir.append((i+1)).append("- Arquivo não encontrado\n");
-                    }
-                }
-            } else {
-                // Nenhum arquivo na pasta
-                exibir.append("Nenhum carro registrado.\n");
+        String exibir = "";
+            for(int i = 0; i < arquivosFila.length; i++){
+                lerCar((i+1), car);
+                exibir += (i+1) + "- " + car.nomeCarro + "\n";
             }
-        } catch (IOException | NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao ler os arquivos.");
-            e.printStackTrace();
-        }
-        
-        return exibir.toString();
+
+        return exibir;
     }
 
     private static int lerId() {
@@ -644,10 +640,11 @@ public class Oficina {
         contPass.status = Integer.parseInt(br.readLine());
         contPass.nomeCliente = br.readLine();
         contPass.numTel = br.readLine();
+        contPass.idReq = br.readLine();
         br.close();
         }
         catch (IOException e){
-            JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
+            JOptionPane.showMessageDialog(null, "C");
         }
         return contPass;
     }
@@ -700,7 +697,7 @@ public class Oficina {
             try {
                 arquivo.createNewFile();
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
+                JOptionPane.showMessageDialog(null, "D");
                 e.printStackTrace();
                 //Tratamento de erro.
 
@@ -722,6 +719,7 @@ public class Oficina {
         File dir = new File(caminhoFila);
         String[] listR = dir.list();
         for(int i = 0; i < listR.length; i++){
+            
             File selecCar = new File(caminhoFila + listR[i]);
             File orgCar = new File(caminhoFila + (i+1) + ".txt");
             selecCar.renameTo(orgCar);
@@ -733,7 +731,7 @@ public class Oficina {
             pw.flush();
             pw.close();
         }catch(IOException e){
-            JOptionPane.showMessageDialog(null, "Algum erro ocorreu.");
+            JOptionPane.showMessageDialog(null, "E");
         }
     }
 
