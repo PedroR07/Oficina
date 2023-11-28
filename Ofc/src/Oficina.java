@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,7 +8,8 @@ import javax.swing.JOptionPane;
 
 public class Oficina {
     
-    //Main
+//                                  Main
+ ///////////////////////////////////////////////////////////////////////////////
     public static void main(String[] args) {
         startCaminho(caminhoFila);
         lerId();
@@ -76,7 +76,7 @@ public class Oficina {
             
             try{
             int seletor = 0;
-            String strSeletor = JOptionPane.showInputDialog(null, "1-Registrar carro\n2-Alterar/Relatar observações\n3-Lista de Espera\n\n\n\n9-Voltar");
+            String strSeletor = JOptionPane.showInputDialog(null, "1-Registrar carro\n2-Alterar/Relatar observações\n3-Lista de Espera\n4-Ver ficha dos carros\n\n\n\n9-Voltar");
             if(strSeletor == null){
                 seletor = 9;
                 //Condicional caso o usuário selecione cancelar;
@@ -85,7 +85,7 @@ public class Oficina {
             }else{
                 seletor = Integer.parseInt(strSeletor);
             }
-            if ((seletor < 1 || seletor > 3) && (seletor != 9)) {
+            if ((seletor < 1 || seletor > 4) && (seletor != 9)) {
                 throw new IllegalArgumentException();
                 //Lança exceção em caso de número maior do que as opções ou formato de dado inválido.
                 
@@ -104,6 +104,11 @@ public class Oficina {
                 case 3:
                     listClient();
                     //Chamada do método de listagem dos clientes e contatos.
+
+                    break;
+                case 4:
+                    acompanhaServico();
+                    //Chama método de leitura de serviço.
 
                     break;
                 case 9:
@@ -183,108 +188,156 @@ public class Oficina {
  ///////////////////////////////////////////////////////////////////////////////
 
     private static void editCar() {
+    //Bloco para verificar se há conteudo para edição na psta.
+    File dirFila = new File(caminhoFila);
+    String[] arqFilas = dirFila.list();
+    
+    if(arqFilas.length != 0){
+    //////////////////////////////////////////////////////////
+
     boolean segurador = true;
+    //Controlador do loop.
     while(segurador == true){
+        
+
         String A = listCar();
-        String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados base\n2-Alterar status\n3-Criar requerimento\n4-Deletar aquivo\n9-Voltar");
+        String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados\n2-Alterar status\n3-Reportar falha excepcional\n4-Excluir veículo\n\n\n\n9-Voltar");
         int seletor = 0;
         if(strSeletor == null){
             seletor = 9;
         }else{
             seletor = Integer.parseInt(strSeletor);
         }
-        try{
-        
+        if ((seletor < 1 || seletor > 4) && (seletor != 9)) {
+                throw new IllegalArgumentException();
+                //Lança exceção em caso de número maior do que as opções ou formato de dado inválido.
+                
+            }
+            try{
         switch (seletor) {
+            
             case 1:
-                RegCar carOri = new RegCar();
-                int seleCar1 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
-                lerCar(seleCar1, carOri);
-                PrintWriter pw1 = new PrintWriter(caminhoFila + seleCar1 + ".txt");
+                RegCar carroOriginal1 = new RegCar();
+                int carSelec1 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                
+                lerCar(carSelec1, carroOriginal1); //Obtém os dados do carro que serão alterados.
+
+                PrintWriter pw1 = new PrintWriter(caminhoFila + carSelec1 + ".txt");
+                
+                //Alteração dos dados.
                 pw1.println(JOptionPane.showInputDialog("Insira o modelo do carro:"));
                 pw1.println(JOptionPane.showInputDialog("Insira a marca do carro:"));
                 pw1.println(JOptionPane.showInputDialog("Insira o ano do carro:"));
                 pw1.println(JOptionPane.showInputDialog("Insira o tipo de serviço:"));
-                pw1.println(carOri.necessidadeRequerimento);
-                pw1.println(Integer.toString(carOri.status));
+                pw1.println(carroOriginal1.necessidadeRequerimento);
+                pw1.println(Integer.toString(carroOriginal1.status));
                 pw1.println(JOptionPane.showInputDialog("Insira o nome do cliente: "));
                 pw1.println(JOptionPane.showInputDialog("Insira o número de telefone: "));
-                pw1.println(carOri.idReq);
+                pw1.println(carroOriginal1.idReq);
                 pw1.flush();
                 pw1.close();
-                JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
+
+                JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!"); //Sucesso.
                 break;
+            
             case 2:
-                int seleCar2 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
-                RegCar seguradorCart = new RegCar();
-                BufferedReader br = new BufferedReader(new FileReader(caminhoFila + seleCar2 + ".txt"));
-                seguradorCart.nomeCarro = br.readLine();
-                seguradorCart.marca = br.readLine();
-                seguradorCart.ano = Integer.parseInt(br.readLine());
-                seguradorCart.tipoServiço = Integer.parseInt(br.readLine());
-                seguradorCart.necessidadeRequerimento = br.readLine();
-                seguradorCart.status = Integer.parseInt(JOptionPane.showInputDialog(null, "Atualize o serviço:\n0-Em espera\n1-Em execução\n2-Concluído"));
-                seguradorCart.nomeCliente = br.readLine();
-                seguradorCart.numTel = br.readLine();
-                seguradorCart.idReq = br.readLine();
-                br.close();
-                System.out.println(seguradorCart.idReq);
-                PrintWriter pw2 = new PrintWriter(caminhoFila + seleCar2 + ".txt");
-                pw2.println(seguradorCart.nomeCarro);
-                pw2.println(seguradorCart.marca);
-                pw2.println(seguradorCart.ano);
-                pw2.println(seguradorCart.tipoServiço);
-                pw2.println(seguradorCart.necessidadeRequerimento);
-                pw2.println(seguradorCart.status);
-                pw2.println(seguradorCart.nomeCliente);
-                pw2.println(seguradorCart.numTel);
-                pw2.println(seguradorCart.idReq);
+                RegCar carroOriginal2 = new RegCar();
+                int carSelec2 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                
+                lerCar(carSelec2, carroOriginal2); //Lê dados do carro original.
+                carroOriginal2.status = Integer.parseInt(JOptionPane.showInputDialog(null, "Atualize o serviço:\n0-Em espera\n1-Em execução\n2-Concluído"));
+                //Atualiza o status
+
+                PrintWriter pw2 = new PrintWriter(caminhoFila + carSelec2 + ".txt");
+                
+                //Altera os dados.
+                pw2.println(carroOriginal2.nomeCarro);
+                pw2.println(carroOriginal2.marca);
+                pw2.println(carroOriginal2.ano);
+                pw2.println(carroOriginal2.tipoServiço);
+                pw2.println(carroOriginal2.necessidadeRequerimento);
+                pw2.println(carroOriginal2.status);
+                pw2.println(carroOriginal2.nomeCliente);
+                pw2.println(carroOriginal2.numTel);
+                pw2.println(carroOriginal2.idReq);
                 pw2.flush();
                 pw2.close();
-                JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
+
+                JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!"); //Sucesso
                 break;
-                case 3:
-                RegCar salvaIdreq = new RegCar();
-                int seleCar3 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
-                lerCar(seleCar3, salvaIdreq);
-                File savReq = new File(caminhoReq + seleCar3 + ".txt/");
-                PrintWriter pw = new PrintWriter(savReq);
+
+            case 3:
+                RegCar carroOriginal3 = new RegCar();
+                int carSelec3 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                lerCar(carSelec3, carroOriginal3); //Lê o carro original.
+
+                File salvaReq = new File(caminhoReq + carSelec3 + ".txt/");
+                PrintWriter pw = new PrintWriter(salvaReq);
                 pw.print(JOptionPane.showInputDialog(null, "Insira a condição de falha: "));
                 pw.flush();
                 pw.close();
-                PrintWriter pwriter = new PrintWriter(caminhoFila + seleCar3 + ".txt/");
-                pwriter.println(salvaIdreq.nomeCarro);
-                pwriter.println(salvaIdreq.marca);
-                pwriter.println(salvaIdreq.ano);
-                pwriter.println(salvaIdreq.tipoServiço);
-                pwriter.println(salvaIdreq.necessidadeRequerimento);
-                pwriter.println(salvaIdreq.status);
-                pwriter.println(salvaIdreq.nomeCliente);
-                pwriter.println(salvaIdreq.numTel);
-                pwriter.println(seleCar3);
+                
+                PrintWriter pwriter = new PrintWriter(caminhoFila + carSelec3 + ".txt/");
+                
+                //Reescreve os dados do carro.
+                pwriter.println(carroOriginal3.nomeCarro);
+                pwriter.println(carroOriginal3.marca);
+                pwriter.println(carroOriginal3.ano);
+                pwriter.println(carroOriginal3.tipoServiço);
+                pwriter.println(carroOriginal3.necessidadeRequerimento);
+                pwriter.println(carroOriginal3.status);
+                pwriter.println(carroOriginal3.nomeCliente);
+                pwriter.println(carroOriginal3.numTel);
+                pwriter.println(carSelec3); //Adiciona o id relativo ao documento em que a falha está escrita;
                 pwriter.flush();
                 pwriter.close();
-                JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!");
+                
+                JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!"); //Sucesso
                 break;
             case 4:
-                int seleCar4 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
-                File delete = new File(caminhoFila + seleCar4 + ".txt/");
-                delete.delete();
-                organizador();
+                //Lê carro.
+                int carroSelec4 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
+                RegCar carroOriginal4 = new RegCar();
+                lerCar(carroSelec4, carroOriginal4);
+                
+                //Deleta o carro e seu respectivo requerimento.
+                File deleteCarro = new File(caminhoFila + carroSelec4 + ".txt/");
+                File deleteReq = new File(caminhoReq + carroOriginal4.idReq + ".txt/");
+                deleteCarro.delete();
+                deleteReq.delete();
+
+                organizador(); //Organiza a pasta
+                if(arqFilas.length != 0){
+                    menuGestor();
+                    //Te joga novamente no menu do gestor caso não há carros para editar.
+                }
                 break;
             case 9:
                 segurador = false;
+                //Fim do laço.
+
                 break;
             }
         }catch(NumberFormatException | IOException e){
             JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
+            //Exceção caso valor inserido seja inválido.
+            
         }
+        }
+    }else{
+        JOptionPane.showMessageDialog(null, "Não há nenhum carro na fila. ");
+        //Pasta vazia.
     }
 }
 
     private static void registraCar() {
         try{
+            int iD = lerId();
+                    
+                    //Limita a fila em 9.
+                    if(iD < 10){
                     RegCar addCarro = new RegCar();
+                    //Inserção de dados;
                     addCarro.nomeCarro = JOptionPane.showInputDialog(null, "Informe o modelo do carro: ");
                     addCarro.marca = JOptionPane.showInputDialog(null, "Informe a marca do carro: ");
                     addCarro.ano = Integer.parseInt(JOptionPane.showInputDialog(null, "Informe o ano do carro: "));
@@ -292,38 +345,49 @@ public class Oficina {
                     addCarro.status = Integer.parseInt(JOptionPane.showInputDialog(null, "O pedido já entrará em execução?\n0-Não\n1-Sim"));
                     addCarro.nomeCliente = JOptionPane.showInputDialog(null, "Informe o nome do cliente:");
                     addCarro.numTel = JOptionPane.showInputDialog(null, "Informe o telefone do cliente:");
-                    try{
-                        int iD = lerId();
-                        if(iD < 10){
-                            PrintWriter pw = new PrintWriter(caminhoFila + (iD) + ".txt");
-                            pw.println(addCarro.nomeCarro);
-                            pw.println(addCarro.marca);
-                            pw.println(addCarro.ano);
-                            pw.println(addCarro.tipoServiço);
-                            pw.println("segurador");
-                            pw.println(addCarro.status);
-                            pw.println(addCarro.nomeCliente);
-                            pw.println(addCarro.numTel);
-                            pw.println(addCarro.idReq);
-                            pw.flush();
-                            pw.close();
-                            JOptionPane.showMessageDialog(null, "Veículo registrado com sucesso!");
-                            organizador();
-                        }
-                        else{
+                    addCarro.idReq = "0"; //Valor padrão = não há falhas excepcionais.
+                    
+                        
+                    PrintWriter pw = new PrintWriter(caminhoFila + (iD) + ".txt");
+                            
+                    //Escritura de dados.
+                    pw.println(addCarro.nomeCarro);
+                    pw.println(addCarro.marca);
+                    pw.println(addCarro.ano);
+                    pw.println(addCarro.tipoServiço);
+                            
+                    pw.println("segurador");
+                    //Segurador, ou placeholder. Segura a posição no documento até posterior alteração.
+                            
+                    pw.println(addCarro.status);
+                    pw.println(addCarro.nomeCliente);
+                    pw.println(addCarro.numTel);
+                    pw.println(addCarro.idReq);
+                    pw.flush();
+                    pw.close();
+                            
+                    JOptionPane.showMessageDialog(null, "Veículo registrado com sucesso!"); //Sucesso
+                    organizador(); //Organiza a pasta.
+                        }else{
                             JOptionPane.showMessageDialog(null, "O sistema atingiu o limite de carros por dia.");
+                            //Já tem nove carros na fila.
                         }
                     }
-                    catch(FileNotFoundException e){
-                        JOptionPane.showMessageDialog(null, "Ocorreu algum erro no registro do carro.");
-                    }
-        }
-        catch(NumberFormatException e){
+        catch(IOException e){
             JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
+            //Trata erros de inserção incorreta de dados.
         }
-        }
+    }
 
     private static void imprimeComprovantes() {
+            
+        //Bloco para verificar se há conteudo para edição na psta.
+        File dirFila = new File(caminhoFila);
+        String[] arqFilas = dirFila.list();
+        
+        if(arqFilas.length != 0){
+        //////////////////////////////////////////////////////////
+        
             boolean segurador = true;
             while (segurador) {
                 try {
@@ -334,13 +398,24 @@ public class Oficina {
                     } else {
                         seletor = Integer.parseInt(strSeletor);
                     }
+                    if ((seletor < 1 || seletor > 2) && (seletor != 9)) {
+                    throw new IllegalArgumentException();
+                    //Lança exceção em caso de número maior do que as opções ou formato de dado inválido.
+                    }
                     switch (seletor) {
                         case 1:
                             int carroNum = Integer.parseInt(JOptionPane.showInputDialog("Selecione o veículo:\n" + listCar()));
                             int valLiq = 0;
                             int valExt = 0;
+                            
+                            //Verifica se o carro selecionado existe na pasta.
+                            File verifCar = new File(caminhoFila + carroNum + ".txt");
+                            if(verifCar.exists()){
+                            
                             RegCar carroSelec = new RegCar();
-                            carroSelec = lerCar(carroNum, carroSelec);
+                            lerCar(carroNum, carroSelec);
+
+                            //Grava o boleto.
                             PrintWriter pw = new PrintWriter(caminhoRel + "Boleto" + (carroNum) + ".txt");
                             pw.println("====================================================");
                             pw.println("====================================================");
@@ -353,6 +428,8 @@ public class Oficina {
                             pw.println("Descrição dos Serviços:");
                             pw.println(" ");
                             pw.println("Nome: " + carroSelec.nomeCarro + " | " + "Ano: " + carroSelec.ano + " | " + "Marca: " + carroSelec.marca);
+                            
+                            //Condicionais para analisar o tipo do serviço e atribuir valor.
                             if(carroSelec.tipoServiço == 12 || carroSelec.tipoServiço == 21){
                                 pw.println("Alinhamento e Balanceamento");
                                 valLiq = 100;
@@ -394,6 +471,7 @@ public class Oficina {
                             }else{
                                 pw.println("Extras: Não");
                             }
+
                             pw.println(" ");
                             pw.println("====================================================");
                             pw.println("====================================================");
@@ -401,13 +479,23 @@ public class Oficina {
                             pw.println("====================================================");
                             pw.flush();
                             pw.close();
-                            JOptionPane.showMessageDialog(null, "O boleto foi gerado com sucesso.");
+                            JOptionPane.showMessageDialog(null, "O boleto foi gerado com sucesso."); //Sucesso.
+                        }else{
+                            JOptionPane.showMessageDialog(null, "O carro não existe."); //Arquivo inexistente.
+                        }
                             break;
-                            case 2:
+                        case 2:
                             int carroNum2 = Integer.parseInt(JOptionPane.showInputDialog("Selecione o veículo:\n" + listCar()));
+                            
+                            //Verifica se o carro selecionado existe na pasta.
+                            File verifCar2 = new File(caminhoFila + carroNum2 + ".txt");
+                            if(verifCar2.exists()){
+                        
                             RegCar carroSelec2 = new RegCar();
                             carroSelec2 = lerCar(carroNum2, carroSelec2);
+                            
                             PrintWriter pw2 = new PrintWriter(caminhoRel + "Relatório" + (carroNum2) + ".txt");
+                            //Gera o relatório.
                             pw2.println("====================================================");
                             pw2.println("====================================================");
                             pw2.println("Auto-Mecânica Souza & Rocha | " + java.time.LocalDate.now());
@@ -415,6 +503,8 @@ public class Oficina {
                             pw2.println("Descrição dos Serviços:");
                             pw2.println(" ");
                             pw2.println("Nome: " + carroSelec2.nomeCarro + " | " + "Ano: " + carroSelec2.ano + " | " + "Marca: " + carroSelec2.marca);
+                            
+                            //Condicional para escrever o tipo do serviço.
                             if(carroSelec2.tipoServiço == 12 || carroSelec2.tipoServiço == 21){
                                 pw2.println("Alinhamento e Balanceamento");
                             }else{
@@ -451,7 +541,11 @@ public class Oficina {
                             pw2.println("====================================================");
                             pw2.flush();
                             pw2.close();
-                            JOptionPane.showMessageDialog(null, "O relatório foi gerado com sucesso.");
+                            JOptionPane.showMessageDialog(null, "O relatório foi gerado com sucesso.");//Sucesso.
+                            
+                            }else{
+                                JOptionPane.showMessageDialog(null, "O carro não existe.");//Arquivo inexistente.
+                            }
                             break;
                         case 9:
                             segurador = false;
@@ -461,15 +555,35 @@ public class Oficina {
                     JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
                 }
             }
+        }else{
+            JOptionPane.showMessageDialog(null, "Não há nenhum carro na fila. ");
+            //Pasta vazia.
+        }
         }
 
     private static void aprovExceps(){
+            //Bloco para verificar se há conteudo para edição na psta.
+            File dirFila = new File(caminhoFila);
+            String[] arqFilas = dirFila.list();
+            
+            if(arqFilas.length != 0){
+            //////////////////////////////////////////////////////////
+            
             RegCar carro = new RegCar();
 
             try{
+            
+            //Lista de carros.
             String A = listCar();
+
+            //Lendo carro.
             int b = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o veículo: " + A));
             lerCar(b, carro);
+            
+            //Verificando se carro existe.
+            File arqCar = new File(caminhoFila + b + ".txt");
+            if(arqCar.exists()){
+            
             File necReq = new File(caminhoReq + carro.idReq + ".txt/");
             if(necReq.exists()){
                 
@@ -497,28 +611,55 @@ public class Oficina {
                     necReq.delete();
                     JOptionPane.showMessageDialog(null, "Você recusou o serviço excepcional e a solicitação foi apagada.");
                 }
+            }else{
+                JOptionPane.showMessageDialog(null, "O carro selecionado não existe.");
+            }
             }
             else{
                 JOptionPane.showMessageDialog(null, "Não há falhas excepcionais.");
             }
         }catch (IOException e){
             JOptionPane.showMessageDialog(null, "Ocorreu algum erro na aprovação das requisições.");
+            }
+        }else{
+            JOptionPane.showMessageDialog(null,"Não há carros na fila.");
         }
     }
 
+ //                          Blocos de Leitura de Dados
+ ///////////////////////////////////////////////////////////////////////////////
+
     private static void acompanhaServico() {
+        //Bloco para verificar se há conteudo para edição na psta.
+        File dirFila = new File(caminhoFila);
+        String[] arqFilas = dirFila.list();
         
+        if(arqFilas.length != 0){
+        //////////////////////////////////////////////////////////
         try {
             Boolean pend = false;
+            
+            //Recebe lista.
             String A = listCar();
+
             int idServico = Integer.parseInt(JOptionPane.showInputDialog(null, "\nSelecione o serviço a ser acompanhado:\n" + A));
+            
+            //Verificando se o carro selecionado existe.
+            File verifCar = new File(caminhoFila + idServico +".txt");
+            
+            if(verifCar.exists()){
+
             BufferedReader br = new BufferedReader(new FileReader(caminhoFila + idServico + ".txt"));
             RegCar carro = new RegCar();
+
+            //Lendo dados.
             carro.nomeCarro = br.readLine();
             carro.marca = br.readLine();
             carro.ano = Integer.parseInt(br.readLine());
             carro.tipoServiço = Integer.parseInt(br.readLine());
             String exibServ = "";
+            
+            //Condicional para verificar o tipo do serviço.
             if(carro.tipoServiço == 12 || carro.tipoServiço == 21){
                 exibServ = "Alinhamento e Balanceamento";
             }else{
@@ -552,10 +693,15 @@ public class Oficina {
             carro.numTel = br.readLine();
             carro.idReq = br.readLine();
             File necReq = new File(caminhoReq + carro.idReq + ".txt/");
+            
+            //Verifica se há alguma falha excepcional relacionada ao carro.
             if(necReq.exists()){
                 pend =  true;
             }
+
             br.close();
+            
+            //Switch simples para verificar qual é o estado do serviço do carro.
             String statReal = "";
             switch (carro.status) {
                 case 0:
@@ -571,6 +717,8 @@ public class Oficina {
     
             // Exibe as informações do veículo
             if(pend == true){
+            //Caso haja falha excepcional.
+
             JOptionPane.showMessageDialog(null, "Detalhes do Serviço:\n\n" +
                     "Modelo do Carro: " + carro.nomeCarro + "\n" +
                     "Marca: " + carro.marca + "\n" +
@@ -579,6 +727,7 @@ public class Oficina {
                     "Falha excepcional: Sim" + "\n" +
                     "Status do serviço: " + statReal);
             }else{
+                //Caso não haja falha excepcional.
                 JOptionPane.showMessageDialog(null, "Detalhes do Serviço:\n\n" +
                 "Modelo do Carro: " + carro.nomeCarro + "\n" +
                 "Marca: " + carro.marca + "\n" +
@@ -587,35 +736,55 @@ public class Oficina {
                 "Falha excepcional: Não" + "\n" +
                 "Status do serviço: " + statReal);
             }
+            }else{
+                JOptionPane.showMessageDialog(null, "O carro selecionado não existe.");
+            }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro ao ler o arquivo.");
             e.printStackTrace();
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Número de serviço inválido.");
         }
+    }else{
+        JOptionPane.showMessageDialog(null, "Não há carros na fila.");
+        }
     }
 
     private static String listCar() {
+        
+        //Listando diretório em um array.
         File dir = new File(caminhoFila);
         String[] arquivosFila = dir.list();
+
         RegCar car = new RegCar();
         String exibir = "";
-            for(int i = 0; i < arquivosFila.length; i++){
-                lerCar((i+1), car);
-                exibir += (i+1) + "- " + car.nomeCarro + "\n";
-            }
 
+        //Construção da String.
+        for(int i = 0; i < arquivosFila.length; i++){
+            //Lendo o contato da posição da lista.
+            lerCar((i+1), car);
+
+            //Montando String.
+            exibir += (i+1) + "- " + car.nomeCarro + "\n";
+        }
         return exibir;
     }
 
     private static int lerId() {
+        //Inicializando a variável.
         int iD = 0;
+
         try{
+        
         BufferedReader br = new BufferedReader(new FileReader("id.txt"));
         String A = br.readLine();
+        
+        //Caso seja nulo, atribui o número 1.
         if(A == null){
             iD = 1;
         }
+        
+        //Caso não seja, recebe o valor lido.
         else{
             iD = Integer.parseInt(A);
         }
@@ -627,36 +796,53 @@ public class Oficina {
         return iD;
     }
 
-    private static RegCar lerCar(int i, RegCar contPass){
+    private static RegCar lerCar(int i, RegCar carroSelec){
         File arquivo = new File(caminhoFila + i + ".txt");
+        //Lê arquivo selecionado para leitura com base na chamada do método.
+
         try{
+        
         BufferedReader br = new BufferedReader(new FileReader(arquivo));
-        contPass.nomeCarro = br.readLine();
-        contPass.marca = br.readLine();
-        contPass.ano = Integer.parseInt(br.readLine());
-        contPass.tipoServiço= Integer.parseInt(br.readLine());
-        contPass.necessidadeRequerimento = br.readLine();
-        contPass.status = Integer.parseInt(br.readLine());
-        contPass.nomeCliente = br.readLine();
-        contPass.numTel = br.readLine();
-        contPass.idReq = br.readLine();
+
+        //Lendo os dados.
+        carroSelec.nomeCarro = br.readLine();
+        carroSelec.marca = br.readLine();
+        carroSelec.ano = Integer.parseInt(br.readLine());
+        carroSelec.tipoServiço= Integer.parseInt(br.readLine());
+        carroSelec.necessidadeRequerimento = br.readLine();
+        carroSelec.status = Integer.parseInt(br.readLine());
+        carroSelec.nomeCliente = br.readLine();
+        carroSelec.numTel = br.readLine();
+        carroSelec.idReq = br.readLine();
         br.close();
         }
         catch (IOException e){
             JOptionPane.showMessageDialog(null, "Ocorreu algum erro na leitura dos dados do carro.");
         }
-        return contPass;
+        return carroSelec;
+        //Retorna o registro do carro.
     }
     
     private static void listClient() {
+        
+        //Variável onde será lido os dados do cliente.
         RegCar contClient = new RegCar();
+        
+        //Listando o diretório.
         File dir = new File(caminhoFila);
         String[] listaDir = dir.list();
+        
+        //Inicializando string onde será exibida a lista.
         String listExibir = "";
+
         for (int i = 0; i < listaDir.length; i++) {
+            //Lendo dados.
             lerCar((i+1), contClient);
+            
+            //Construção da string.
             listExibir = listExibir + (i+1) + "- " + "Carro: " + contClient.nomeCarro + " - "+ "Cliente: " + contClient.nomeCliente + " - " + "Tel: " + contClient.numTel + "\n";
         }
+        //Exibição.
         JOptionPane.showMessageDialog(null, listExibir);
     }
 
@@ -709,8 +895,6 @@ public class Oficina {
     private static final String caminhoRel  = "Relatórios/";
     private static final String caminhoFila = "Fila/";
     private static final String caminhoReq = "Requerimentos/";
-
-
 
  //                                Organizador
  ///////////////////////////////////////////////////////////////////////////////
