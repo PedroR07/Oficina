@@ -67,7 +67,6 @@ public class Oficina {
             }
             }
         }
-    
     private static void menuGestor() {
         boolean segurador = true;
         //Variável controladora do loop while.
@@ -124,7 +123,6 @@ public class Oficina {
                 }
             }
         }
-
     private static void menuCliente() {
         boolean segurador = true;
         //Variável controladora do loop while.
@@ -329,7 +327,6 @@ public class Oficina {
         //Pasta vazia.
     }
 }
-
     private static void registraCar() {
         try{
             int iD = lerId();
@@ -378,7 +375,6 @@ public class Oficina {
             //Trata erros de inserção incorreta de dados.
         }
     }
-
     private static void imprimeComprovantes() {
             
         //Bloco para verificar se há conteudo para edição na psta.
@@ -560,71 +556,66 @@ public class Oficina {
             //Pasta vazia.
         }
         }
-
-    private static void aprovExceps(){
-            //Bloco para verificar se há conteudo para edição na psta.
+    private static void aprovExceps() {
+            // Bloco para verificar se há conteúdo para edição na pasta.
             File dirFila = new File(caminhoFila);
             String[] arqFilas = dirFila.list();
-            
-            if(arqFilas.length != 0){
-            //////////////////////////////////////////////////////////
-            
-            RegCar carro = new RegCar();
-
-            try{
-            
-            //Lista de carros.
-            String A = listCar();
-
-            //Lendo carro.
-            int b = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o veículo: " + A));
-            lerCar(b, carro);
-            
-            //Verificando se carro existe.
-            File arqCar = new File(caminhoFila + b + ".txt");
-            if(arqCar.exists()){
-            
-            File necReq = new File(caminhoReq + carro.idReq + ".txt/");
-            if(necReq.exists()){
-                
-                RegCar carReq = new RegCar();
-                lerCar(b, carReq);
-                BufferedReader br = new BufferedReader(new FileReader(necReq));
-                carReq.necessidadeRequerimento = br.readLine();
-                br.close();
-                int c = Integer.parseInt(JOptionPane.showInputDialog(null, "Falha Excepcional: " + carReq.necessidadeRequerimento + "\nDeseja autorizar a manutenção extra?\n1-Sim\n2-Não"));
-                if(c == 1){
-                PrintWriter pw = new PrintWriter(caminhoFila + b + ".txt/");
-                pw.println(carReq.nomeCarro);
-                pw.println(carReq.marca);
-                pw.println(carReq.ano);
-                pw.println(carReq.tipoServiço);
-                pw.println(carReq.necessidadeRequerimento);
-                pw.println(carReq.status);
-                pw.println(carReq.nomeCliente);
-                pw.println(carReq.numTel);
-                pw.println(carReq.idReq);
-                pw.flush();
-                pw.close();
-                JOptionPane.showMessageDialog(null, "A manutenção será realizada e o valor \nextra será adicionado a fatura do serviço.");
-                }else{
-                    necReq.delete();
-                    JOptionPane.showMessageDialog(null, "Você recusou o serviço excepcional e a solicitação foi apagada.");
+        
+            if (arqFilas.length != 0) {
+                RegCar carro = new RegCar();
+        
+                try {
+                    // Lista de carros.
+                    String A = listCar();
+        
+                    // Lendo carro.
+                    int b = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o veículo: " + A));
+                    lerCar(b, carro);
+        
+                    // Verificando se carro existe.
+                    File arqCar = new File(caminhoFila + b + ".txt");
+                    if (arqCar.exists()) {
+        
+                        File necReq = new File(caminhoReq + carro.idReq + ".txt");
+                        if (necReq.exists()) {
+                            RegCar carReq = new RegCar();
+                            lerCar(b, carReq);
+                            BufferedReader br = new BufferedReader(new FileReader(necReq));
+                            carReq.necessidadeRequerimento = br.readLine();
+                            br.close();
+                            int c = Integer.parseInt(JOptionPane.showInputDialog(null, "Falha Excepcional: " + carReq.necessidadeRequerimento + "\nDeseja autorizar a manutenção extra?\n1-Sim\n2-Não"));
+                            if (c == 1) {
+                                PrintWriter pw = new PrintWriter(caminhoFila + b + ".txt");
+                                pw.println(carReq.nomeCarro);
+                                pw.println(carReq.marca);
+                                pw.println(carReq.ano);
+                                pw.println(carReq.tipoServiço);
+                                pw.println(carReq.necessidadeRequerimento);
+                                pw.println(carReq.status);
+                                pw.println(carReq.nomeCliente);
+                                pw.println(carReq.numTel);
+                                pw.println(carReq.idReq);
+                                pw.flush();
+                                pw.close();
+                                JOptionPane.showMessageDialog(null, "A manutenção será realizada e o valor \nextra será adicionado a fatura do serviço.");
+                            } else {
+                                necReq.delete();
+                                JOptionPane.showMessageDialog(null, "Você recusou o serviço excepcional e a solicitação foi apagada.");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "A requisição excepcional para o carro selecionado não existe.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "O carro selecionado não existe.");
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Ocorreu algum erro na aprovação das requisições.");
                 }
-            }else{
-                JOptionPane.showMessageDialog(null, "O carro selecionado não existe.");
+            } else {
+                JOptionPane.showMessageDialog(null, "Não há carros na fila.");
             }
-            }
-            else{
-                JOptionPane.showMessageDialog(null, "Não há falhas excepcionais.");
-            }
-        }catch (IOException e){
-            JOptionPane.showMessageDialog(null, "Ocorreu algum erro na aprovação das requisições.");
-            }
-        }else{
-            JOptionPane.showMessageDialog(null,"Não há carros na fila.");
         }
-    }
+
 
  //                          Blocos de Leitura de Dados
  ///////////////////////////////////////////////////////////////////////////////
@@ -749,7 +740,6 @@ public class Oficina {
         JOptionPane.showMessageDialog(null, "Não há carros na fila.");
         }
     }
-
     private static String listCar() {
         
         //Listando diretório em um array.
@@ -769,7 +759,6 @@ public class Oficina {
         }
         return exibir;
     }
-
     private static int lerId() {
         //Inicializando a variável.
         int iD = 0;
@@ -795,7 +784,6 @@ public class Oficina {
         }
         return iD;
     }
-
     private static RegCar lerCar(int i, RegCar carroSelec){
         File arquivo = new File(caminhoFila + i + ".txt");
         //Lê arquivo selecionado para leitura com base na chamada do método.
@@ -822,7 +810,6 @@ public class Oficina {
         return carroSelec;
         //Retorna o registro do carro.
     }
-    
     private static void listClient() {
         
         //Variável onde será lido os dados do cliente.
