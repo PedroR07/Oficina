@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
 
-public class Oficina {
+public class oficina {
     
 //                                  Main
  ///////////////////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ public class Oficina {
         switch (seletor) {
             
             case 1:
-                RegCar carroOriginal1 = new RegCar();
+                regCar carroOriginal1 = new regCar();
                 int carSelec1 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
                 
                 lerCar(carSelec1, carroOriginal1); //Obtém os dados do carro que serão alterados.
@@ -239,7 +239,7 @@ public class Oficina {
                 break;
             
             case 2:
-                RegCar carroOriginal2 = new RegCar();
+                regCar carroOriginal2 = new regCar();
                 int carSelec2 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
                 
                 lerCar(carSelec2, carroOriginal2); //Lê dados do carro original.
@@ -265,7 +265,7 @@ public class Oficina {
                 break;
 
             case 3:
-                RegCar carroOriginal3 = new RegCar();
+                regCar carroOriginal3 = new regCar();
                 int carSelec3 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
                 lerCar(carSelec3, carroOriginal3); //Lê o carro original.
 
@@ -295,7 +295,7 @@ public class Oficina {
             case 4:
                 //Lê carro.
                 int carroSelec4 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
-                RegCar carroOriginal4 = new RegCar();
+                regCar carroOriginal4 = new regCar();
                 lerCar(carroSelec4, carroOriginal4);
                 
                 //Deleta o carro e seu respectivo requerimento.
@@ -333,7 +333,7 @@ public class Oficina {
                     
                     //Limita a fila em 9.
                     if(iD < 10){
-                    RegCar addCarro = new RegCar();
+                    regCar addCarro = new regCar();
                     //Inserção de dados;
                     addCarro.nomeCarro = JOptionPane.showInputDialog(null, "Informe o modelo do carro: ");
                     addCarro.marca = JOptionPane.showInputDialog(null, "Informe a marca do carro: ");
@@ -408,7 +408,7 @@ public class Oficina {
                             File verifCar = new File(caminhoFila + carroNum + ".txt");
                             if(verifCar.exists()){
                             
-                            RegCar carroSelec = new RegCar();
+                            regCar carroSelec = new regCar();
                             lerCar(carroNum, carroSelec);
 
                             //Grava o boleto.
@@ -487,7 +487,7 @@ public class Oficina {
                             File verifCar2 = new File(caminhoFila + carroNum2 + ".txt");
                             if(verifCar2.exists()){
                         
-                            RegCar carroSelec2 = new RegCar();
+                            regCar carroSelec2 = new regCar();
                             carroSelec2 = lerCar(carroNum2, carroSelec2);
                             
                             PrintWriter pw2 = new PrintWriter(caminhoRel + "Relatório" + (carroNum2) + ".txt");
@@ -562,7 +562,7 @@ public class Oficina {
             String[] arqFilas = dirFila.list();
         
             if (arqFilas.length != 0) {
-                RegCar carro = new RegCar();
+                regCar carro = new regCar();
         
                 try {
                     // Lista de carros.
@@ -578,7 +578,7 @@ public class Oficina {
                     lerCar(b, carro);
                         File necReq = new File(caminhoReq + carro.idReq + ".txt");
                         if (necReq.exists()) {
-                            RegCar carReq = new RegCar();
+                            regCar carReq = new regCar();
                             lerCar(b, carReq);
                             BufferedReader br = new BufferedReader(new FileReader(necReq));
                             carReq.necessidadeRequerimento = br.readLine();
@@ -641,7 +641,7 @@ public class Oficina {
             if(verifCar.exists()){
 
             BufferedReader br = new BufferedReader(new FileReader(caminhoFila + idServico + ".txt"));
-            RegCar carro = new RegCar();
+            regCar carro = new regCar();
 
             //Lendo dados.
             carro.nomeCarro = br.readLine();
@@ -746,7 +746,7 @@ public class Oficina {
         File dir = new File(caminhoFila);
         String[] arquivosFila = dir.list();
 
-        RegCar car = new RegCar();
+        regCar car = new regCar();
         String exibir = "";
 
         //Construção da String.
@@ -784,7 +784,7 @@ public class Oficina {
         }
         return iD;
     }
-    private static RegCar lerCar(int i, RegCar carroSelec){
+    private static regCar lerCar(int i, regCar carroSelec){
         File arquivo = new File(caminhoFila + i + ".txt");
         //Lê arquivo selecionado para leitura com base na chamada do método.
 
@@ -813,7 +813,7 @@ public class Oficina {
     private static void listClient() {
         
         //Variável onde será lido os dados do cliente.
-        RegCar contClient = new RegCar();
+        regCar contClient = new regCar();
         
         //Listando o diretório.
         File dir = new File(caminhoFila);
