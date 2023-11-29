@@ -1,4 +1,4 @@
-public class RegCar {
+public class regCar {
     String nomeCarro;
     String marca;
     int ano;
@@ -14,3 +14,4 @@ public class RegCar {
     String numTel;
     String idReq;
 }
+
