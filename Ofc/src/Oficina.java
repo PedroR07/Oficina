@@ -17,7 +17,7 @@ public class Oficina {
     }
     
 
- //                       Blocos dos Principais Menus
+ //                       Bloco dos Principais Menus
  ///////////////////////////////////////////////////////////////////////////////
     
     private static void menuGeral() {
@@ -131,7 +131,7 @@ public class Oficina {
             
             try{
             int seletor = 0;
-            String strSeletor = JOptionPane.showInputDialog(null, "1- Acompanhar serviço\n2- Comprovantes\n3- Solicitações de Requerimento\n4- Tabela de Preços\n\n\n\n9-Voltar");
+            String strSeletor = JOptionPane.showInputDialog(null, "1- Acompanhar serviço\n2- Comprovantes\n3- Falhas Excepcionais\n4- Tabela de Preços\n\n\n\n9-Voltar");
             if(strSeletor == null){
                 seletor = 9;
                 //Condicional caso o usuário selecione cancelar;
@@ -174,7 +174,7 @@ public class Oficina {
                 }
             }
             catch(NumberFormatException e){
-            JOptionPane.showMessageDialog(null, "Insira uma valor válido (apenas números)!");
+            JOptionPane.showMessageDialog(null, "Insira um valor válido (apenas números)!");
             //Local onde a exceção é trada se necessário.
 
             }
@@ -182,7 +182,7 @@ public class Oficina {
     }
 
 
- //                          Blocos de Escrita de Dados
+ //                          Bloco de Escrita de Dados
  ///////////////////////////////////////////////////////////////////////////////
 
     private static void editCar() {
@@ -199,7 +199,7 @@ public class Oficina {
         
 
         String A = listCar();
-        String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados\n2-Alterar status\n3-Reportar falha excepcional\n4-Excluir veículo\n\n\n\n9-Voltar");
+        String strSeletor = JOptionPane.showInputDialog(null, "1-Editar dados\n2-Alterar status do serviço\n3-Reportar falha excepcional\n4-Excluir registro de veículo\n\n\n\n9-Voltar");
         int seletor = 0;
         if(strSeletor == null){
             seletor = 9;
@@ -243,7 +243,7 @@ public class Oficina {
                 int carSelec2 = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o carro:\n" + A));
                 
                 lerCar(carSelec2, carroOriginal2); //Lê dados do carro original.
-                carroOriginal2.status = Integer.parseInt(JOptionPane.showInputDialog(null, "Atualize o serviço:\n0-Em espera\n1-Em execução\n2-Concluído"));
+                carroOriginal2.status = Integer.parseInt(JOptionPane.showInputDialog(null, "Atualize o estado do serviço:\n0-Em espera\n1-Em execução\n2-Concluído"));
                 //Atualiza o status
 
                 PrintWriter pw2 = new PrintWriter(caminhoFila + carSelec2 + ".txt");
@@ -271,7 +271,7 @@ public class Oficina {
 
                 File salvaReq = new File(caminhoReq + carSelec3 + ".txt/");
                 PrintWriter pw = new PrintWriter(salvaReq);
-                pw.print(JOptionPane.showInputDialog(null, "Insira a condição de falha: "));
+                pw.print(JOptionPane.showInputDialog(null, "Descreva a falha: "));
                 pw.flush();
                 pw.close();
                 
@@ -323,7 +323,7 @@ public class Oficina {
         }
         }
     }else{
-        JOptionPane.showMessageDialog(null, "Não há nenhum carro na fila. ");
+        JOptionPane.showMessageDialog(null, "Não há carros na fila.");
         //Pasta vazia.
     }
 }
@@ -340,8 +340,8 @@ public class Oficina {
                     addCarro.ano = Integer.parseInt(JOptionPane.showInputDialog(null, "Informe o ano do carro: "));
                     addCarro.tipoServiço = Integer.parseInt(JOptionPane.showInputDialog(null, "Especifique os serviços as serem prestados:\n1-Alinhamento\n2-Balanceamento\n3-Revisão"));
                     addCarro.status = Integer.parseInt(JOptionPane.showInputDialog(null, "O pedido já entrará em execução?\n0-Não\n1-Sim"));
-                    addCarro.nomeCliente = JOptionPane.showInputDialog(null, "Informe o nome do cliente:");
-                    addCarro.numTel = JOptionPane.showInputDialog(null, "Informe o telefone do cliente:");
+                    addCarro.nomeCliente = JOptionPane.showInputDialog(null, "Informe o nome do cliente: ");
+                    addCarro.numTel = JOptionPane.showInputDialog(null, "Informe o telefone do cliente: ");
                     addCarro.idReq = "0"; //Valor padrão = não há falhas excepcionais.
                     
                         
@@ -569,13 +569,13 @@ public class Oficina {
                     String A = listCar();
         
                     // Lendo carro.
-                    int b = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o veículo: " + A));
-                    lerCar(b, carro);
+                    int b = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o veículo:\n" + A));
+                    
         
                     // Verificando se carro existe.
                     File arqCar = new File(caminhoFila + b + ".txt");
                     if (arqCar.exists()) {
-        
+                    lerCar(b, carro);
                         File necReq = new File(caminhoReq + carro.idReq + ".txt");
                         if (necReq.exists()) {
                             RegCar carReq = new RegCar();
@@ -603,7 +603,7 @@ public class Oficina {
                                 JOptionPane.showMessageDialog(null, "Você recusou o serviço excepcional e a solicitação foi apagada.");
                             }
                         } else {
-                            JOptionPane.showMessageDialog(null, "A requisição excepcional para o carro selecionado não existe.");
+                            JOptionPane.showMessageDialog(null, "Ainda não foram relatadas falhas excepcionais\npara o carro selecionado.");
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "O carro selecionado não existe.");
@@ -617,7 +617,7 @@ public class Oficina {
         }
 
 
- //                          Blocos de Leitura de Dados
+ //                          Bloco de Leitura de Dados
  ///////////////////////////////////////////////////////////////////////////////
 
     private static void acompanhaServico() {
@@ -633,7 +633,7 @@ public class Oficina {
             //Recebe lista.
             String A = listCar();
 
-            int idServico = Integer.parseInt(JOptionPane.showInputDialog(null, "\nSelecione o serviço a ser acompanhado:\n" + A));
+            int idServico = Integer.parseInt(JOptionPane.showInputDialog(null, "Selecione o serviço a ser acompanhado:\n" + A));
             
             //Verificando se o carro selecionado existe.
             File verifCar = new File(caminhoFila + idServico +".txt");
@@ -822,6 +822,8 @@ public class Oficina {
         //Inicializando string onde será exibida a lista.
         String listExibir = "";
 
+
+        if(listaDir.length > 0){
         for (int i = 0; i < listaDir.length; i++) {
             //Lendo dados.
             lerCar((i+1), contClient);
@@ -831,6 +833,9 @@ public class Oficina {
         }
         //Exibição.
         JOptionPane.showMessageDialog(null, listExibir);
+        }else{
+            JOptionPane.showMessageDialog(null, "Não há carros na fila.");
+        }
     }
 
  //                   Caminhos (Constantes e Inicializador)
